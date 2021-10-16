@@ -5,7 +5,7 @@ import (
 	"api-ecommerce/docs"
 	"api-ecommerce/routes"
 	"api-ecommerce/utils"
-	"log"
+	"fmt"
 
 	"github.com/joho/godotenv"
 )
@@ -23,7 +23,8 @@ func main() {
 	// for load godotenv
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		// log.Fatal("Error loading .env file")
+		fmt.Println("Error loading .env file")
 	}
 
 	// Programmatically set swagger info
