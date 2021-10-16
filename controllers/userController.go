@@ -16,7 +16,7 @@ type userUpdateInput struct {
 	Gender    string `json:"gender"`
 	Phone     string `json:"phone"`
 	PhotoPath string `json:"photo_path"`
-	RoleID    uint   `json:"role_id"`
+	Role      string `json:"role"`
 }
 
 type userCreateInput struct {
@@ -74,7 +74,7 @@ func CreateUser(c *gin.Context) {
 		Gender:    input.Gender,
 		Phone:     input.Phone,
 		PhotoPath: input.PhotoPath,
-		RoleID:    input.RoleID,
+		Role:      input.Role,
 	}
 	db := c.MustGet("db").(*gorm.DB)
 	// db.Create(&user)
@@ -140,7 +140,7 @@ func UpdateUser(c *gin.Context) {
 	updatedInput.Gender = input.Gender
 	updatedInput.Phone = input.Phone
 	updatedInput.PhotoPath = input.PhotoPath
-	updatedInput.RoleID = input.RoleID
+	updatedInput.Role = input.Role
 	updatedInput.UpdatedAt = time.Now()
 
 	db.Model(&user).Updates(updatedInput)

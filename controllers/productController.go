@@ -12,8 +12,8 @@ import (
 type productInput struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	Dimension   string `json:"dimension"`
 	PhotoPath   string `json:"photo_path"`
+	Stock       uint   `json:"stock"`
 	Price       uint   `json:"price"`
 	Weight      uint   `json:"weight"`
 	CategoryID  uint   `json:"category_id"`
@@ -74,7 +74,7 @@ func CreateProduct(c *gin.Context) {
 	product := models.Product{
 		Name:        input.Name,
 		Description: input.Description,
-		Dimension:   input.Dimension,
+		Stock:       input.Stock,
 		PhotoPath:   input.PhotoPath,
 		Price:       input.Price,
 		Weight:      input.Weight,
@@ -146,7 +146,7 @@ func UpdateProduct(c *gin.Context) {
 	var updatedInput models.Product
 	updatedInput.Name = input.Name
 	updatedInput.Description = input.Description
-	updatedInput.Dimension = input.Dimension
+	updatedInput.Stock = input.Stock
 	updatedInput.PhotoPath = input.PhotoPath
 	updatedInput.Price = input.Price
 	updatedInput.Weight = input.Weight

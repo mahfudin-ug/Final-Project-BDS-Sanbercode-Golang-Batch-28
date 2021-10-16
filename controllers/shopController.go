@@ -9,16 +9,11 @@ import (
 	"gorm.io/gorm"
 )
 
-type shopUpdateInput struct {
-	Name      string `json:"name"`
-	Bank      string `json:"bank"`
-	Phone     string `json:"phone"`
-	AddressID uint   `json:"address_id"`
-}
-
 type shopInput struct {
-	shopUpdateInput
-	UserID uint `json:"user_id"`
+	Name   string `json:"name"`
+	Bank   string `json:"bank"`
+	Phone  string `json:"phone"`
+	UserID uint   `json:"user_id"`
 }
 
 // GetAllShop godoc
@@ -58,11 +53,10 @@ func CreateShop(c *gin.Context) {
 
 	// Create
 	shop := models.Shop{
-		Name:      input.Name,
-		Bank:      input.Bank,
-		Phone:     input.Phone,
-		UserID:    input.UserID,
-		AddressID: input.AddressID,
+		Name:   input.Name,
+		Bank:   input.Bank,
+		Phone:  input.Phone,
+		UserID: input.UserID,
 	}
 	db.Create(&shop)
 
@@ -117,7 +111,7 @@ func GetProductByShopId(c *gin.Context) {
 // @Produce json
 // @Param id path string true "Shop id"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
-// @Param Body body shopUpdateInput true "the body to update shop"
+// @Param Body body shopInput true "the body to update shop"
 // @Success 200 {object} models.Shop
 // @Router /shops/{id} [put]
 func UpdateShop(c *gin.Context) {
@@ -130,7 +124,7 @@ func UpdateShop(c *gin.Context) {
 	}
 
 	// Validate input
-	var input shopUpdateInput
+	var input shopInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -140,7 +134,6 @@ func UpdateShop(c *gin.Context) {
 	updatedInput.Name = input.Name
 	updatedInput.Bank = input.Bank
 	updatedInput.Phone = input.Phone
-	updatedInput.AddressID = input.AddressID
 	updatedInput.UpdatedAt = time.Now()
 
 	db.Model(&shop).Updates(updatedInput)

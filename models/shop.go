@@ -9,10 +9,8 @@ type (
 		Bank      string    `json:"bank"`
 		Phone     string    `json:"phone"`
 		UserID    uint      `json:"user_id"`
-		AddressID uint      `json:"address_id"`
 		CreatedAt time.Time `json:"created_at"`
 		UpdatedAt time.Time `json:"updated_at"`
 		User      User      `json:"-"`
-		Address   Address   `json:"-"`
 	}
 )

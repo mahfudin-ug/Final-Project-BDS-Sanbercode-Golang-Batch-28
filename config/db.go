@@ -43,5 +43,21 @@ func ConnectDatabase() *gorm.DB {
 
 	db.AutoMigrate(&models.User{}, &models.Shop{}, &models.Category{}, &models.Product{}, &models.Order{}, &models.OrderProduct{}, &models.Address{})
 
+	// Initialize data
+	var user models.User
+	if err := db.Where("username = ?", utils.Getenv("INITIAL_ADMIN_USERNAME", "admin")).First(&user).Error; err != nil {
+		user.FirstName = "Admin"
+		user.LastName = "Admin"
+		user.Username = utils.Getenv("INITIAL_ADMIN_USERNAME", "admin")
+		user.Email = "admin@golang.lo"
+		user.Password = utils.Getenv("INITIAL_ADMIN_PASSWORD", "secret")
+		user.Role = models.UserRoleAdmin
+		_, err := user.SaveUser(db)
+
+		if err != nil {
+			panic(err.Error())
+		}
+	}
+
 	return db
 }

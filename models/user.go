@@ -22,11 +22,17 @@ type (
 		Gender    string    `json:"gender"`
 		Phone     string    `json:"phone"`
 		PhotoPath string    `json:"photo_path"`
-		RoleID    uint      `json:"role_id"`
+		Role      string    `json:"role"`
 		CreatedAt time.Time `json:"created_at"`
 		UpdatedAt time.Time `json:"updated_at"`
 		Address   []Address `json:"-"`
 	}
+)
+
+const (
+	UserRoleAdmin  = "ADMIN"
+	UserRoleSeller = "SELLER"
+	UserRoleBuyer  = "BUYER"
 )
 
 func VerifyPassword(password, hashedPassword string) error {

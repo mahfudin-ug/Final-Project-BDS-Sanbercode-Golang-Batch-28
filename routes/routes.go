@@ -3,6 +3,7 @@ package routes
 import (
 	"api-ecommerce/controllers"
 	"api-ecommerce/middlewares"
+	"api-ecommerce/models"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -25,7 +26,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	userRoute := r.Group("/users")
 	userRoute.GET("/", controllers.GetAllUser)
 	userRoute.GET("/:id", controllers.GetUserById)
-	userRoute.Use(middlewares.JwtAuthMiddleware())
+	userRoute.Use(middlewares.AuthMiddleware(models.UserRoleBuyer))
 	userRoute.POST("/", controllers.CreateUser)
 	userRoute.PUT("/:id", controllers.UpdateUser)
 	userRoute.DELETE("/:id", controllers.DeleteUser)
@@ -40,7 +41,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	categoryRoute := r.Group("/categories")
 	categoryRoute.GET("/", controllers.GetAllCategory)
 	categoryRoute.GET("/:id/products", controllers.GetProductByCategoryId)
-	categoryRoute.Use(middlewares.JwtAuthMiddleware())
+	categoryRoute.Use(middlewares.AuthMiddleware(models.UserRoleAdmin))
 	categoryRoute.POST("/", controllers.CreateCategory)
 	categoryRoute.PUT("/:id", controllers.UpdateCategory)
 	categoryRoute.DELETE("/:id", controllers.DeleteCategory)
@@ -49,7 +50,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	shopRoute.GET("/", controllers.GetAllShop)
 	shopRoute.GET("/:id", controllers.GetShopById)
 	shopRoute.GET("/:id/products", controllers.GetProductByShopId)
-	shopRoute.Use(middlewares.JwtAuthMiddleware())
+	shopRoute.Use(middlewares.AuthMiddleware(models.UserRoleAdmin))
 	shopRoute.POST("/", controllers.CreateShop)
 	shopRoute.PUT("/:id", controllers.UpdateShop)
 	shopRoute.DELETE("/:id", controllers.DeleteShop)
@@ -57,7 +58,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	productRoute := r.Group("/products")
 	productRoute.GET("/", controllers.GetAllProduct)
 	productRoute.GET("/:id", controllers.GetProductById)
-	productRoute.Use(middlewares.JwtAuthMiddleware())
+	productRoute.Use(middlewares.AuthMiddleware(models.UserRoleAdmin))
 	productRoute.POST("/", controllers.CreateProduct)
 	productRoute.PUT("/:id", controllers.UpdateProduct)
 	productRoute.DELETE("/:id", controllers.DeleteProduct)
@@ -65,12 +66,12 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	productRoute.POST("/:id/add-cart", controllers.AddProductOrder)
 
 	cartRoute := r.Group("/cart")
-	cartRoute.Use(middlewares.JwtAuthMiddleware())
+	cartRoute.Use(middlewares.AuthMiddleware(models.UserRoleBuyer))
 	cartRoute.PUT("/:id", controllers.UpdateProductOrder)
 	cartRoute.DELETE("/:id", controllers.DeleteProductOrder)
 
 	orderRoute := r.Group("/orders")
-	orderRoute.Use(middlewares.JwtAuthMiddleware())
+	orderRoute.Use(middlewares.AuthMiddleware(models.UserRoleAdmin, models.UserRoleBuyer))
 	orderRoute.GET("/", controllers.GetAllOrder)
 	orderRoute.GET("/:id", controllers.GetOrderById)
 	orderRoute.POST("/", controllers.CreateOrder)

@@ -10,9 +10,8 @@ import (
 )
 
 type categoryInput struct {
-	Name             string `json:"name"`
-	Description      string `json:"description"`
-	ParentCategoryID uint   `json:"parent_category_id"`
+	Name        string `json:"name"`
+	Description string `json:"description"`
 }
 
 // GetAllCategory godoc
@@ -58,9 +57,8 @@ func CreateCategory(c *gin.Context) {
 
 	// Create category
 	category := models.Category{
-		Name:             input.Name,
-		Description:      input.Description,
-		ParentCategoryID: input.ParentCategoryID,
+		Name:        input.Name,
+		Description: input.Description,
 	}
 	db.Create(&category)
 
@@ -117,7 +115,6 @@ func UpdateCategory(c *gin.Context) {
 	var updatedInput models.Category
 	updatedInput.Name = input.Name
 	updatedInput.Description = input.Description
-	updatedInput.ParentCategoryID = input.ParentCategoryID
 	updatedInput.UpdatedAt = time.Now()
 
 	db.Model(&category).Updates(updatedInput)
