@@ -2,20 +2,40 @@ package config
 
 import (
 	"api-ecommerce/models"
+	"api-ecommerce/utils"
 	"fmt"
+	"os"
 
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func ConnectDatabase() *gorm.DB {
-	username := "user"
-	password := "P@ssw0rd"
-	database := "sanber_final"
-	host := "tcp(127.0.0.1:3306)"
+	env := utils.Getenv("ENVIRONMENT", "local")
+	var db *gorm.DB
+	var err error
+	if env == "production" {
+		username := os.Getenv("DB_USERNAME")
+		password := os.Getenv("DB_PASSWORD")
+		host := os.Getenv("DB_HOST")
+		port := os.Getenv("DB_PORT")
+		database := os.Getenv("DB_NAME")
 
-	dsn := fmt.Sprintf("%v:%v@%v/%v?charset=utf8mb4&parseTime=True&loc=Local", username, password, host, database)
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+		dsn := "host=" + host + " user=" + username + " password=" + password + " dbname=" + database + " port=" + port + " sslmode=require"
+		db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+	} else {
+		// local env
+
+		username := "user"
+		password := "P@ssw0rd"
+		database := "sanber_final"
+		host := "tcp(127.0.0.1:3306)"
+
+		dsn := fmt.Sprintf("%v:%v@%v/%v?charset=utf8mb4&parseTime=True&loc=Local", username, password, host, database)
+		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	}
 
 	if err != nil {
 		panic(err.Error())
