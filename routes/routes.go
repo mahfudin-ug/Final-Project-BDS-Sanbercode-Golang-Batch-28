@@ -4,6 +4,7 @@ import (
 	"api-ecommerce/controllers"
 	"api-ecommerce/middlewares"
 	"api-ecommerce/models"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -17,6 +18,10 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	// set db to gin context
 	r.Use(func(c *gin.Context) {
 		c.Set("db", db)
+	})
+
+	r.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusFound, "/swagger/index.html")
 	})
 
 	// PUBLIC routes

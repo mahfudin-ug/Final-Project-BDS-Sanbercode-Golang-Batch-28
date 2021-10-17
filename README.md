@@ -1,3 +1,10 @@
-# Final Project : BDS Golang
-Checkout deployment site [here](https://github.com/mahfudin-ug/Final-Project-BDS-Sanbercode-Golang-Batch-28).
+# Final Project : BDS Golang (E-commerce)
+Checkout deployment site [here](https://fudi-golang-ecommerce.herokuapp.com).<br/>
+Make sure to create .env file after clone
 
+## Initial Credential
+
+```
+Username: admin
+Password: secret
+```

@@ -28,7 +28,7 @@ CREATE TABLE `addresses` (
   `city` longtext DEFAULT NULL,
   `country` longtext DEFAULT NULL,
   `province` longtext DEFAULT NULL,
-  `zip` bigint(20) unsigned DEFAULT NULL,
+  `zip` bigint(20) DEFAULT NULL,
   `latitude` longtext DEFAULT NULL,
   `longitude` longtext DEFAULT NULL,
   `user_id` bigint(20) unsigned DEFAULT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE `addresses` (
   `updated_at` datetime(3) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_users_address` (`user_id`),
-  CONSTRAINT `fk_users_address` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  CONSTRAINT `fk_users_address` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -86,15 +86,15 @@ CREATE TABLE `order_products` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `order_id` bigint(20) unsigned DEFAULT NULL,
   `product_id` bigint(20) unsigned DEFAULT NULL,
-  `qty` bigint(20) unsigned DEFAULT NULL,
+  `qty` bigint(20) DEFAULT NULL,
   `note` longtext DEFAULT NULL,
-  `total` bigint(20) unsigned DEFAULT NULL,
+  `total` bigint(20) DEFAULT NULL,
   `created_at` datetime(3) DEFAULT NULL,
   `updated_at` datetime(3) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_orders_order_product` (`order_id`),
   KEY `fk_order_products_product` (`product_id`),
-  CONSTRAINT `fk_order_products_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`),
+  KEY `fk_orders_order_product` (`order_id`),
+  CONSTRAINT `fk_order_products_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_orders_order_product` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -120,14 +120,17 @@ CREATE TABLE `orders` (
   `status` longtext DEFAULT NULL,
   `payment` longtext DEFAULT NULL,
   `courier` longtext DEFAULT NULL,
-  `total` bigint(20) unsigned DEFAULT NULL,
+  `total` bigint(20) DEFAULT NULL,
   `user_id` bigint(20) unsigned DEFAULT NULL,
+  `resi` longtext DEFAULT NULL,
   `paid_at` timestamp NULL DEFAULT NULL,
+  `sent_at` timestamp NULL DEFAULT NULL,
+  `complete_at` timestamp NULL DEFAULT NULL,
   `created_at` datetime(3) DEFAULT NULL,
   `updated_at` datetime(3) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_orders_user` (`user_id`),
-  CONSTRAINT `fk_orders_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  CONSTRAINT `fk_orders_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -151,10 +154,10 @@ CREATE TABLE `products` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` longtext NOT NULL,
   `description` longtext DEFAULT NULL,
-  `stock` bigint(20) unsigned DEFAULT NULL,
+  `stock` bigint(20) DEFAULT NULL,
   `photo_path` longtext DEFAULT NULL,
-  `price` bigint(20) unsigned DEFAULT NULL,
-  `weight` bigint(20) unsigned DEFAULT NULL,
+  `price` bigint(20) DEFAULT NULL,
+  `weight` bigint(20) DEFAULT NULL,
   `category_id` bigint(20) unsigned DEFAULT NULL,
   `shop_id` bigint(20) unsigned DEFAULT NULL,
   `created_at` datetime(3) DEFAULT NULL,
@@ -163,7 +166,7 @@ CREATE TABLE `products` (
   KEY `fk_products_category` (`category_id`),
   KEY `fk_products_shop` (`shop_id`),
   CONSTRAINT `fk_products_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `fk_products_shop` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `fk_products_shop` FOREIGN KEY (`shop_id`) REFERENCES `shops` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -193,7 +196,7 @@ CREATE TABLE `shops` (
   `updated_at` datetime(3) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fk_shops_user` (`user_id`),
-  CONSTRAINT `fk_shops_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  CONSTRAINT `fk_shops_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -238,7 +241,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin','admin@golang.lo','$2a$10$0MaLEzOOLEkpZ.1D64NY/um1JS1eLKU6HONkF.H2KKhZvp9tCqboe','Admin','Admin','','','','ADMIN','2021-10-16 22:12:58.805','2021-10-16 22:12:58.805');
+INSERT INTO `users` VALUES (1,'admin','admin@golang.lo','$2a$10$gQ.xKeSyZ2JqePa/Nke3hOoOzhaugpAmVFokZGxNG9lI17GX4OqjS','Admin','Admin','','','','ADMIN','2021-10-17 10:33:11.224','2021-10-17 10:33:11.224');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -255,4 +258,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-10-16 22:39:54
+-- Dump completed on 2021-10-17 10:35:53

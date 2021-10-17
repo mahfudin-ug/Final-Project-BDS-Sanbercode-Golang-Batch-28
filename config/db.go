@@ -28,12 +28,13 @@ func ConnectDatabase() *gorm.DB {
 	} else {
 		// local env
 
-		username := "user"
-		password := "P@ssw0rd"
-		database := "sanber_final"
-		host := "tcp(127.0.0.1:3306)"
+		username := utils.Getenv("DB_USERNAME", "user")
+		password := utils.Getenv("DB_PASSWORD", "secret")
+		host := utils.Getenv("DB_HOST", "127.0.0.1")
+		port := utils.Getenv("DB_PORT", "3306")
+		database := utils.Getenv("DB_NAME", "sanber_final")
 
-		dsn := fmt.Sprintf("%v:%v@%v/%v?charset=utf8mb4&parseTime=True&loc=Local", username, password, host, database)
+		dsn := fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?charset=utf8mb4&parseTime=True&loc=Local", username, password, host, port, database)
 		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	}
 
