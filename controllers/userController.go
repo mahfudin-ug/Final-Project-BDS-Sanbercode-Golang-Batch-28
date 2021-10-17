@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"api-ecommerce/models"
+	"api-ecommerce/utils/token"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -47,6 +49,18 @@ func GetAllUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": users})
 }
 
+func isValidRole(role string) bool {
+	switch role {
+	case models.UserRoleAdmin:
+		return true
+	case models.UserRoleSeller:
+		return true
+	case models.UserRoleBuyer:
+		return true
+	}
+	return false
+}
+
 // CreateUser godoc
 // @Summary Create new User
 // @Description Creating new User
@@ -64,6 +78,11 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
+	if isValid := isValidRole(input.Role); !isValid {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Role is not in [%v, %v, %v]", models.UserRoleAdmin, models.UserRoleSeller, models.UserRoleBuyer)})
+		return
+	}
+
 	// Create user
 	user := models.User{
 		Email:     input.Email,
@@ -77,7 +96,6 @@ func CreateUser(c *gin.Context) {
 		Role:      input.Role,
 	}
 	db := c.MustGet("db").(*gorm.DB)
-	// db.Create(&user)
 	_, errUser := user.SaveUser(db)
 
 	if errUser != nil {
@@ -91,7 +109,7 @@ func CreateUser(c *gin.Context) {
 // GetUserById godoc
 // @Summary Get User detail
 // @Description Get User by Id
-// @Tags Admin
+// @Tags Admin, Buyer, Seller
 // @Produce json
 // @Param id path string true "User id"
 // @Success 200 {object} models.User
@@ -101,7 +119,7 @@ func GetUserById(c *gin.Context) {
 
 	db := c.MustGet("db").(*gorm.DB)
 	if err := db.Where("id =?", c.Param("id")).First(&user).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found!"})
 		return
 	}
 
@@ -111,7 +129,7 @@ func GetUserById(c *gin.Context) {
 // UpdateUser godoc
 // @Summary Update User
 // @Description Update User by id
-// @Tags Admin, User
+// @Tags Admin, Buyer, Seller
 // @Produce json
 // @Param id path string true "User id"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
@@ -134,6 +152,11 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
+	if isValid := isValidRole(input.Role); !isValid {
+		c.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Role is not in [%v, %v, %v]", models.UserRoleAdmin, models.UserRoleSeller, models.UserRoleBuyer)})
+		return
+	}
+
 	var updatedInput models.User
 	updatedInput.FirstName = input.FirstName
 	updatedInput.LastName = input.LastName
@@ -151,7 +174,7 @@ func UpdateUser(c *gin.Context) {
 // DeleteUser godoc
 // @Summary Delete user
 // @Description Delete user by id
-// @Tags Admin
+// @Tags Admin, Buyer, Seller
 // @Produce json
 // @Param id path string true "User id"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
@@ -162,7 +185,7 @@ func DeleteUser(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	var user models.User
 	if err := db.Where("id = ?", c.Param("id")).First(&user).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
 		return
 	}
 
@@ -173,18 +196,25 @@ func DeleteUser(c *gin.Context) {
 // ChangePassword godoc
 // @Summary Change Password
 // @Description Change Password
-// @Tags User
+// @Tags Admin, Buyer, Seller
 // @Produce json
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Param Body body changePasswordInput true "the body to change password"
 // @Success 200 {object} map[string]boolean
-// @Router /users/{id}/change-password [put]
+// @Router /users/change-password [post]
 func ChangePassword(c *gin.Context) {
 	// Get model if exist
 	db := c.MustGet("db").(*gorm.DB)
+
+	userId, errToken := token.ExtractTokenID(c)
+	if userId == 0 || errToken != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token!"})
+		return
+	}
+
 	var user models.User
-	if err := db.Where("id = ?", c.Param("id")).First(&user).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found"})
+	if err := db.Where("id = ?", userId).First(&user).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
 		return
 	}
 

@@ -17,12 +17,172 @@ var doc = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/address": {
+            "post": {
+                "description": "Creating new Address",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyer",
+                    "Seller"
+                ],
+                "summary": "Create new Address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "the body to create new Address",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.addressInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Address"
+                        }
+                    }
+                }
+            }
+        },
+        "/address/{id}": {
+            "get": {
+                "description": "Get Address by Id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyer",
+                    "Seller"
+                ],
+                "summary": "Get Address detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Address"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update Address by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyer",
+                    "Seller"
+                ],
+                "summary": "Update Address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Address id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "the body to update address",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.addressInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Address"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Delete address by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyer",
+                    "Seller"
+                ],
+                "summary": "Delete address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Address id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "boolean"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/cart/{id}/": {
             "put": {
                 "description": "Update Product from Order",
@@ -30,7 +190,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Buyer"
                 ],
                 "summary": "Update Product from Order",
                 "parameters": [
@@ -73,7 +233,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Buyer"
                 ],
                 "summary": "Delete Product from Order",
                 "parameters": [
@@ -288,23 +448,20 @@ var doc = `{
         },
         "/login": {
             "post": {
-                "description": "Logging in to get jwt token to access admin or user api by roles",
+                "description": "Search Product, Shop, Category by keyword",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Public"
                 ],
-                "summary": "Login user",
+                "summary": "Search by keyword",
                 "parameters": [
                     {
-                        "description": "the body to login user",
-                        "name": "Body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.LoginInput"
-                        }
+                        "type": "string",
+                        "description": "keyword of searching",
+                        "name": "search",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -325,6 +482,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
+                    "Buyer",
                     "Admin"
                 ],
                 "summary": "Get all Order",
@@ -346,7 +504,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Buyer"
                 ],
                 "summary": "Create new Order",
                 "parameters": [
@@ -384,7 +542,8 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Buyer",
+                    "Admin"
                 ],
                 "summary": "Get Order detail",
                 "parameters": [
@@ -411,7 +570,8 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Buyer",
+                    "Admin"
                 ],
                 "summary": "Update Order",
                 "parameters": [
@@ -486,6 +646,124 @@ var doc = `{
                 }
             }
         },
+        "/orders/{id}/complete": {
+            "post": {
+                "description": "Complete Order by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyer"
+                ],
+                "summary": "Complete Order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Order"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/{id}/pay": {
+            "post": {
+                "description": "Pay Order by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyer"
+                ],
+                "summary": "Pay Order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Order"
+                        }
+                    }
+                }
+            }
+        },
+        "/orders/{id}/send": {
+            "post": {
+                "description": "Send Order by id",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller",
+                    "Admin"
+                ],
+                "summary": "Send Order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "the body to update order",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.orderSendInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Order"
+                        }
+                    }
+                }
+            }
+        },
         "/products": {
             "get": {
                 "description": "Get a list of Product",
@@ -522,7 +800,8 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Seller",
+                    "Admin"
                 ],
                 "summary": "Create new Product",
                 "parameters": [
@@ -587,7 +866,8 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Seller",
+                    "Admin"
                 ],
                 "summary": "Update Product",
                 "parameters": [
@@ -630,7 +910,8 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Seller",
+                    "Admin"
                 ],
                 "summary": "Delete product",
                 "parameters": [
@@ -662,14 +943,14 @@ var doc = `{
                 }
             }
         },
-        "/products/{id}/order": {
+        "/products/{id}/add-cart": {
             "post": {
                 "description": "Add Product to Order",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Buyer"
                 ],
                 "summary": "Add Product to Order",
                 "parameters": [
@@ -766,7 +1047,8 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Seller",
+                    "Admin"
                 ],
                 "summary": "Create new Shop",
                 "parameters": [
@@ -831,7 +1113,8 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Seller",
+                    "Admin"
                 ],
                 "summary": "Update Shop",
                 "parameters": [
@@ -855,7 +1138,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controllers.shopUpdateInput"
+                            "$ref": "#/definitions/controllers.shopInput"
                         }
                     }
                 ],
@@ -874,7 +1157,8 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Seller",
+                    "Admin"
                 ],
                 "summary": "Delete shop",
                 "parameters": [
@@ -997,6 +1281,82 @@ var doc = `{
                 }
             }
         },
+        "/users/address": {
+            "get": {
+                "description": "Get a list of Address",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyer",
+                    "Seller"
+                ],
+                "summary": "Get all Address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Address"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/change-password": {
+            "post": {
+                "description": "Change Password",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin",
+                    "Buyer",
+                    "Seller"
+                ],
+                "summary": "Change Password",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "the body to change password",
+                        "name": "Body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.changePasswordInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "boolean"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/users/{id}": {
             "get": {
                 "description": "Get User by Id",
@@ -1004,7 +1364,9 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Admin"
+                    "Admin",
+                    "Buyer",
+                    "Seller"
                 ],
                 "summary": "Get User detail",
                 "parameters": [
@@ -1032,7 +1394,8 @@ var doc = `{
                 ],
                 "tags": [
                     "Admin",
-                    "User"
+                    "Buyer",
+                    "Seller"
                 ],
                 "summary": "Update User",
                 "parameters": [
@@ -1075,7 +1438,9 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Admin"
+                    "Admin",
+                    "Buyer",
+                    "Seller"
                 ],
                 "summary": "Delete user",
                 "parameters": [
@@ -1092,259 +1457,6 @@ var doc = `{
                         "name": "Authorization",
                         "in": "header",
                         "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "boolean"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/users/{id}/address": {
-            "get": {
-                "description": "Get a list of Address",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Get all Address",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "User id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Address"
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Creating new Address",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Create new Address",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "the body to create new Address",
-                        "name": "Body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.addressInput"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Address"
-                        }
-                    }
-                }
-            }
-        },
-        "/users/{id}/address/{address_id}": {
-            "get": {
-                "description": "Get Address by Id",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Get Address detail",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Address id",
-                        "name": "address_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Address"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "Update Address by id",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Update Address",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Address id",
-                        "name": "address_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "the body to update address",
-                        "name": "Body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.addressInput"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Address"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete address by id",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Delete address",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User id",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Address id",
-                        "name": "address_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "boolean"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/users/{id}/change-password": {
-            "put": {
-                "description": "Change Password",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User"
-                ],
-                "summary": "Change Password",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authorization. How to input in swagger : 'Bearer \u003cinsert_your_token_here\u003e'",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "description": "the body to change password",
-                        "name": "Body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controllers.changePasswordInput"
-                        }
                     }
                 ],
                 "responses": {
@@ -1444,9 +1556,6 @@ var doc = `{
                 },
                 "name": {
                     "type": "string"
-                },
-                "parent_category_id": {
-                    "type": "integer"
                 }
             }
         },
@@ -1475,6 +1584,14 @@ var doc = `{
                 }
             }
         },
+        "controllers.orderSendInput": {
+            "type": "object",
+            "properties": {
+                "resi": {
+                    "type": "string"
+                }
+            }
+        },
         "controllers.productInput": {
             "type": "object",
             "properties": {
@@ -1482,9 +1599,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "description": {
-                    "type": "string"
-                },
-                "dimension": {
                     "type": "string"
                 },
                 "name": {
@@ -1499,6 +1613,9 @@ var doc = `{
                 "shop_id": {
                     "type": "integer"
                 },
+                "stock": {
+                    "type": "integer"
+                },
                 "weight": {
                     "type": "integer"
                 }
@@ -1507,9 +1624,6 @@ var doc = `{
         "controllers.shopInput": {
             "type": "object",
             "properties": {
-                "address_id": {
-                    "type": "integer"
-                },
                 "bank": {
                     "type": "string"
                 },
@@ -1521,23 +1635,6 @@ var doc = `{
                 },
                 "user_id": {
                     "type": "integer"
-                }
-            }
-        },
-        "controllers.shopUpdateInput": {
-            "type": "object",
-            "properties": {
-                "address_id": {
-                    "type": "integer"
-                },
-                "bank": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
                 }
             }
         },
@@ -1565,8 +1662,8 @@ var doc = `{
                 "photo_path": {
                     "type": "string"
                 },
-                "role_id": {
-                    "type": "integer"
+                "role": {
+                    "type": "string"
                 },
                 "username": {
                     "type": "string"
@@ -1591,8 +1688,8 @@ var doc = `{
                 "photo_path": {
                     "type": "string"
                 },
-                "role_id": {
-                    "type": "integer"
+                "role": {
+                    "type": "string"
                 }
             }
         },
@@ -1649,9 +1746,6 @@ var doc = `{
                 "name": {
                     "type": "string"
                 },
-                "parent_category_id": {
-                    "type": "integer"
-                },
                 "updated_at": {
                     "type": "string"
                 }
@@ -1660,6 +1754,9 @@ var doc = `{
         "models.Order": {
             "type": "object",
             "properties": {
+                "complete_at": {
+                    "type": "string"
+                },
                 "courier": {
                     "type": "string"
                 },
@@ -1673,6 +1770,12 @@ var doc = `{
                     "type": "string"
                 },
                 "payment": {
+                    "type": "string"
+                },
+                "resi": {
+                    "type": "string"
+                },
+                "sent_at": {
                     "type": "string"
                 },
                 "status": {
@@ -1730,9 +1833,6 @@ var doc = `{
                 "desc": {
                     "type": "string"
                 },
-                "dimension": {
-                    "type": "string"
-                },
                 "id": {
                     "type": "integer"
                 },
@@ -1748,6 +1848,9 @@ var doc = `{
                 "shop_id": {
                     "type": "integer"
                 },
+                "stock": {
+                    "type": "integer"
+                },
                 "updated_at": {
                     "type": "string"
                 },
@@ -1759,9 +1862,6 @@ var doc = `{
         "models.Shop": {
             "type": "object",
             "properties": {
-                "address_id": {
-                    "type": "integer"
-                },
                 "bank": {
                     "type": "string"
                 },
@@ -1815,8 +1915,8 @@ var doc = `{
                 "photo_path": {
                     "type": "string"
                 },
-                "role_id": {
-                    "type": "integer"
+                "role": {
+                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"

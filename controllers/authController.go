@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"api-ecommerce/models"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -45,17 +44,11 @@ func Login(c *gin.Context) {
 	token, err := models.LoginCheck(u.Username, u.Password, db)
 
 	if err != nil {
-		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Username or Password is incorrect."})
 		return
 	}
 
-	user := map[string]string{
-		"username": u.Username,
-		"email":    u.Email,
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "Login Success", "token": token, "user": user})
+	c.JSON(http.StatusOK, gin.H{"message": "Login Success", "token": token})
 }
 
 // Register godoc
@@ -79,6 +72,7 @@ func Register(c *gin.Context) {
 	u.Username = input.Username
 	u.Email = input.Email
 	u.Password = input.Password
+	u.Role = models.UserRoleBuyer
 
 	_, err := u.SaveUser(db)
 
@@ -87,10 +81,5 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	user := map[string]string{
-		"username": input.Username,
-		"email":    input.Email,
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "Registation success", "user": user})
+	c.JSON(http.StatusOK, gin.H{"message": "Registation success", "user": u})
 }

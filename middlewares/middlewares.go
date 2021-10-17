@@ -36,6 +36,7 @@ func AuthMiddleware(roles ...string) gin.HandlerFunc {
 			for _, validRole := range roles {
 				if user.Role == validRole {
 					c.Next()
+					return
 				}
 			}
 

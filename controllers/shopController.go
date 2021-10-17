@@ -35,7 +35,7 @@ func GetAllShop(c *gin.Context) {
 // CreateShop godoc
 // @Summary Create new Shop
 // @Description Creating new Shop
-// @Tags User
+// @Tags Seller, Admin
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Param Body body shopInput true "the body to create new Shop"
 // @Produce json
@@ -49,14 +49,22 @@ func CreateShop(c *gin.Context) {
 		return
 	}
 
-	// TODO: restruct shop
+	var user models.User
+	if err := db.Where("id = ?", input.UserID).First(&user).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User not found"})
+		return
+	}
+	if user.Role != models.UserRoleSeller {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "User is not a Seller"})
+		return
+	}
 
 	// Create
 	shop := models.Shop{
 		Name:   input.Name,
 		Bank:   input.Bank,
 		Phone:  input.Phone,
-		UserID: input.UserID,
+		UserID: user.ID,
 	}
 	db.Create(&shop)
 
@@ -107,7 +115,7 @@ func GetProductByShopId(c *gin.Context) {
 // UpdateShop godoc
 // @Summary Update Shop
 // @Description Update Shop by id
-// @Tags User
+// @Tags Seller, Admin
 // @Produce json
 // @Param id path string true "Shop id"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
@@ -145,7 +153,7 @@ func UpdateShop(c *gin.Context) {
 // DeleteShop godoc
 // @Summary Delete shop
 // @Description Delete shop by id
-// @Tags User
+// @Tags Seller, Admin
 // @Produce json
 // @Param id path string true "Shop id"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"

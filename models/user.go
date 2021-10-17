@@ -25,7 +25,7 @@ type (
 		Role      string    `json:"role"`
 		CreatedAt time.Time `json:"created_at"`
 		UpdatedAt time.Time `json:"updated_at"`
-		Address   []Address `json:"-"`
+		Address   []Address `json:"-" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	}
 )
 

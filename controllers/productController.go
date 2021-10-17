@@ -13,9 +13,9 @@ type productInput struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	PhotoPath   string `json:"photo_path"`
-	Stock       uint   `json:"stock"`
-	Price       uint   `json:"price"`
-	Weight      uint   `json:"weight"`
+	Stock       int    `json:"stock"`
+	Price       int    `json:"price"`
+	Weight      int    `json:"weight"`
 	CategoryID  uint   `json:"category_id"`
 	ShopID      uint   `json:"shop_id"`
 }
@@ -45,7 +45,7 @@ func GetAllProduct(c *gin.Context) {
 // CreateProduct godoc
 // @Summary Create new Product
 // @Description Creating new Product
-// @Tags User
+// @Tags Seller, Admin
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
 // @Param Body body productInput true "the body to create new Product"
 // @Produce json
@@ -109,7 +109,7 @@ func GetProductById(c *gin.Context) {
 // UpdateProduct godoc
 // @Summary Update Product
 // @Description Update Product by id
-// @Tags User
+// @Tags Seller, Admin
 // @Produce json
 // @Param id path string true "Product id"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
@@ -162,7 +162,7 @@ func UpdateProduct(c *gin.Context) {
 // DeleteProduct godoc
 // @Summary Delete product
 // @Description Delete product by id
-// @Tags User
+// @Tags Seller, Admin
 // @Produce json
 // @Param id path string true "Product id"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
@@ -177,7 +177,6 @@ func DeleteProduct(c *gin.Context) {
 		return
 	}
 
-	// TODO if product has used
 	db.Delete(&product)
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

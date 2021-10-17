@@ -7,12 +7,12 @@ type (
 		ID        uint      `json:"id" gorm:"primary_key"`
 		OrderID   uint      `json:"order_id"`
 		ProductID uint      `json:"product_id"`
-		Qty       uint      `json:"qty"`
+		Qty       int       `json:"qty"`
 		Note      string    `json:"note"`
-		Total     uint      `json:"total"`
+		Total     int       `json:"total"`
 		CreatedAt time.Time `json:"created_at"`
 		UpdatedAt time.Time `json:"updated_at"`
-		Order     Order     `json:"-"`
-		Product   Product   `json:"-"`
+		Order     Order     `json:"-" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+		Product   Product   `json:"-" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	}
 )

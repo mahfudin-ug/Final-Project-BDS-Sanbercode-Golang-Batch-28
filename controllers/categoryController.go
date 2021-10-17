@@ -101,7 +101,7 @@ func UpdateCategory(c *gin.Context) {
 	// Get model if exist
 	var category models.Category
 	if err := db.Where("id = ?", c.Param("id")).First(&category).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record no found."})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Category not found"})
 		return
 	}
 
@@ -136,11 +136,10 @@ func DeleteCategory(c *gin.Context) {
 	db := c.MustGet("db").(*gorm.DB)
 	var category models.Category
 	if err := db.Where("id = ?", c.Param("id")).First(&category).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Category not found"})
 		return
 	}
 
-	// TODO if category has used
 	db.Delete(&category)
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

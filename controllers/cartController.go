@@ -11,14 +11,14 @@ import (
 )
 
 type cartInput struct {
-	Qty  uint   `json:"qty"`
+	Qty  int    `json:"qty"`
 	Note string `json:"note"`
 }
 
 // AddProductOrder godoc
 // @Summary Add Product to Order
 // @Description Add Product to Order
-// @Tags User
+// @Tags Buyer
 // @Produce json
 // @Param id path string true "Product id"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
@@ -50,6 +50,11 @@ func AddProductOrder(c *gin.Context) {
 		return
 	}
 
+	if input.Qty > product.Stock {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Product stock not enough"})
+		return
+	}
+
 	productTotal := input.Qty * product.Price
 	orderProduct := models.OrderProduct{
 		Qty:       input.Qty,
@@ -59,9 +64,12 @@ func AddProductOrder(c *gin.Context) {
 		Total:     productTotal,
 	}
 	db.Create(&orderProduct)
-	// Recalculate grand total order
-	_, err = order.RecalculateOrder(db)
-	if err != nil {
+	// Update product stock and Grand total of order
+	if _, err = product.SubtractStock(input.Qty, db); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Update Product stock failed"})
+		return
+	}
+	if _, err = order.RecalculateOrder(db); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Order Recalculation failed"})
 		return
 	}
@@ -72,7 +80,7 @@ func AddProductOrder(c *gin.Context) {
 // UpdateProductOrder godoc
 // @Summary Update Product from Order
 // @Description Update Product from Order
-// @Tags User
+// @Tags Buyer
 // @Produce json
 // @Param id path string true "OrderProduct id"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
@@ -104,6 +112,11 @@ func UpdateProductOrder(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	updatedQty := input.Qty - orderProduct.Qty
+	if updatedQty > product.Stock {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Product stock not enough"})
+		return
+	}
 
 	productTotal := input.Qty * product.Price
 	var updatedInput models.OrderProduct
@@ -113,9 +126,12 @@ func UpdateProductOrder(c *gin.Context) {
 	updatedInput.UpdatedAt = time.Now()
 
 	db.Model(&orderProduct).Updates(updatedInput)
-	// Recalculate grand total order
-	_, err := order.RecalculateOrder(db)
-	if err != nil {
+	// Update product stock and Grand total of order
+	if _, err := product.SubtractStock(updatedQty, db); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Update Product stock failed"})
+		return
+	}
+	if _, err := order.RecalculateOrder(db); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Order Recalculation failed"})
 		return
 	}
@@ -126,7 +142,7 @@ func UpdateProductOrder(c *gin.Context) {
 // DeleteProductOrder godoc
 // @Summary Delete Product from Order
 // @Description Delete Product from Order
-// @Tags User
+// @Tags Buyer
 // @Produce json
 // @Param id path string true "OrderProduct id"
 // @Param Authorization header string true "Authorization. How to input in swagger : 'Bearer <insert_your_token_here>'"
